@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  email          String          @unique
+  password       String
+  createdAt      DateTime        @default(now())
+  
+  cartItems      Cart_Favorite[]
+  orders         Web_Order[]
+  reviews        Review[]
+}
+
+model Ticket {
+  id          Int             @id @default(autoincrement())
+  title       String
+  posterUrl   String          
+  dateTime    DateTime
+  basePrice   Float
+  stock       Int
+  
+  promotions  Promotion[]
+  cartItems   Cart_Favorite[]
+}
+
+model Promotion {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  discount    Float
+  validUntil  DateTime
+  
+  ticketId    Int
+  ticket      Ticket   @relation(fields: [ticketId], references: [id])
+}
+
+model Cart_Favorite {
+  id        Int      @id @default(autoincrement())
+  type      String   // 'cart' или 'favorite'
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  ticketId  Int
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+}
+
+model Web_Order {
+  id          Int                @id @default(autoincrement())
+  totalAmount Float
+  createdAt   DateTime           @default(now())
+
+  userId      Int
+  user        User               @relation(fields: [userId], references: [id])
+  
+  history     History?
+  reviews     Review[]
+  documents   Document_Request[]
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  orderId   Int      @unique
+  order     Web_Order @relation(fields: [orderId], references: [id])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  comment   String
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  orderId   Int
+  order     Web_Order @relation(fields: [orderId], references: [id])
+}
+
+model Document_Request {
+  id        Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+
+  orderId   Int
+  order     Web_Order @relation(fields: [orderId], references: [id])
+}
