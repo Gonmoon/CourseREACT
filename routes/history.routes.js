@@ -3,17 +3,17 @@ import { prisma } from "../prisma/prisma.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-    try {
-        const history = await prisma.history.findMany({
-            include: {
-                order: true
-            }
-        });
-        res.json(history);
-    } catch(err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+router.get("/", asyncHandler(async (req, res) => {
+    const history = await prisma.history.findMany({
+        include: {
+            order: true
+        }
+    });
+    res.json(history);
+}));
 
 export default router;

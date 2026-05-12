@@ -23,7 +23,7 @@ router.get("/:userId", asyncHandler(async (req, res) => {
     const items = await prisma.cart_Favorite.findMany({
         where: {
             userId: Number(req.params.userId),
-            type: "cart"
+            type: "favorite"
         }
     });
     res.json(items);
@@ -33,7 +33,7 @@ router.get("count/:userId", asyncHandler(async (req, res) => {
     const items = await prisma.cart_Favorite.findMany({
         where: {
             userId: Number(req.params.userId),
-            type: "cart"
+            type: "favorite"
         }
     });
     res.json(items.length);
@@ -43,12 +43,11 @@ router.delete("/:id", asyncHandler(async (req, res) => {
     await prisma.cart_Favorite.delete({
         where: {
             id: Number(req.params.id),
-            type: "cart"
+            type: "favorite"
         }
     });
 
     res.sendStatus(204);
 }));
-
 
 export default router;

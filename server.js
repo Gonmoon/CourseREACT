@@ -9,6 +9,7 @@ import usersRoutes from "./routes/users.routes.js";
 import ticketsRoutes from "./routes/tickets.routes.js";
 import promotionsRoutes from "./routes/promotions.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
+import favoriteRoutes from "./routes/favorite.routes.js";
 import ordersRoutes from "./routes/orders.routes.js";
 import reviewsRoutes from "./routes/reviews.routes.js";
 import historyRoutes from "./routes/history.routes.js";
@@ -36,10 +37,18 @@ app.use("/api/users", usersRoutes);
 app.use("/api/tickets", ticketsRoutes);
 app.use("/api/promotions", promotionsRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/favorite", favoriteRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/documents", documentsRoutes);
+
+app.use((err, req, res, next) => {
+    res.status(500).json({ 
+        message: "Сервер ушёл(",
+        error: err.message 
+    });
+});
 
 app.listen(process.env.PORT, process.env.HOST, () => {
 	console.log(` Server running: http://${process.env.HOST}:${process.env.PORT}`);

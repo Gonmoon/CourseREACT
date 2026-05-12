@@ -3,57 +3,58 @@ import { prisma } from "../prisma/prisma.js";
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-    try {
-        const user = await prisma.user.create({
-            data: req.body
-        });
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
 
-        res.json(user);
+router.post("/", asyncHandler(async (req, res) => {
 
-    } catch(err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    const user = await prisma.user.create({
+        data: req.body
+    });
 
-router.get("/:id", async (req, res) => {
-    try {
-        const users = await prisma.user.findMany();
-        res.json(users);
-    } catch(err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    res.json(user);
+}));
 
-router.put("/:id", async (req, res) => {
-    try {
-        const user = await prisma.user.update({
-            where: {
-                id: Number(req.params.id)
-            },
-            data: req.body
-        });
+router.get("/", asyncHandler(async (req, res) => {
+    const users = await prisma.user.findMany();
+    res.json(users);
+}));
 
-        res.json(user);
+router.get("/:id", asyncHandler(async (req, res) => {
 
-    } catch(err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    const user = await prisma.user.findUnique({
+        where: {
+            id: Number(req.params.id)
+        },
+    });
 
-router.delete("/:id", async (req, res) => {
-    try {
-        await prisma.user.delete({
-            where: {
-                id: Number(req.params.id)
-            }
-        });
+    res.json(user);
+}));
 
-        res.sendStatus(204);
+router.put("/:id", asyncHandler(async (req, res) => {
 
-    } catch(err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    const { email, ...updateData } = req.body;
+
+    const user = await prisma.user.update({
+        where: {
+            id: Number(req.params.id)
+        },
+        data: updateData
+    });
+
+    res.json(user);
+}));
+
+router.delete("/:id", asyncHandler(async (req, res) => {
+
+    await prisma.user.delete({
+        where: {
+            id: Number(req.params.id)
+        }
+    });
+
+    res.sendStatus(204);
+}));
 
 export default router;
