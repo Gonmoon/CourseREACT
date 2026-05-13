@@ -8,42 +8,64 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 router.post("/", asyncHandler(async (req, res) => {
-    const item = await prisma.cart_Favorite.create({
+
+    const {
+        userId,
+        ticketId
+    } = req.body;
+
+    if (
+        !userId ||
+        !ticketId
+    ) {
+        return res.status(400).json({
+            message: "Все поля обязательны"
+        });
+    }
+
+    const favorite = await prisma.favorite.create({
         data: {
-            userId: Number(req.body.userId),
-            ticketId: Number(req.body.ticketId),
-            type: req.body.type,
-            quantity: Number(req.body.quantity)
+            userId: Number(userId),
+            ticketId: Number(ticketId)
         }
     });
-    res.json(item);
+
+    res.status(201).json(favorite);
 }));
 
 router.get("/:userId", asyncHandler(async (req, res) => {
-    const items = await prisma.cart_Favorite.findMany({
+
+    const items = await prisma.favorite.findMany({
         where: {
-            userId: Number(req.params.userId),
-            type: "favorite"
+            userId: Number(req.params.userId)
+        },
+        include: {
+            ticket: true,
+            user: true
         }
     });
+
     res.json(items);
 }));
 
-router.get("count/:userId", asyncHandler(async (req, res) => {
-    const items = await prisma.cart_Favorite.findMany({
+router.get("/count/:userId", asyncHandler(async (req, res) => {
+
+    const items = await prisma.favorite.findMany({
         where: {
-            userId: Number(req.params.userId),
-            type: "favorite"
+            userId: Number(req.params.userId)
         }
     });
-    res.json(items.length);
+
+    res.json({
+        count: items.length
+    });
 }));
 
 router.delete("/:id", asyncHandler(async (req, res) => {
-    await prisma.cart_Favorite.delete({
+
+    await prisma.favorite.delete({
         where: {
-            id: Number(req.params.id),
-            type: "favorite"
+            id: Number(req.params.id)
         }
     });
 

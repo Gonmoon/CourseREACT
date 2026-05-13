@@ -8,47 +8,87 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 router.post("/", asyncHandler(async (req, res) => {
-    const item = await prisma.cart_Favorite.create({
+
+    const {
+        userId,
+        ticketId,
+        quantity
+    } = req.body;
+
+    if (
+        !userId ||
+        !ticketId ||
+        !quantity
+    ) {
+        return res.status(400).json({
+            message: "Все поля обязательны"
+        });
+    }
+
+    const cart = await prisma.cart.create({
         data: {
-            userId: Number(req.body.userId),
-            ticketId: Number(req.body.ticketId),
-            type: req.body.type,
-            quantity: Number(req.body.quantity)
+            userId: Number(userId),
+            ticketId: Number(ticketId),
+            quantity: Number(quantity)
         }
     });
-    res.json(item);
+
+    res.status(201).json(cart);
 }));
 
 router.get("/:userId", asyncHandler(async (req, res) => {
-    const items = await prisma.cart_Favorite.findMany({
+
+    const items = await prisma.cart.findMany({
         where: {
-            userId: Number(req.params.userId),
-            type: "cart"
+            userId: Number(req.params.userId)
+        },
+        include: {
+            ticket: true,
+            user: true
         }
     });
+
     res.json(items);
 }));
 
-router.get("count/:userId", asyncHandler(async (req, res) => {
-    const items = await prisma.cart_Favorite.findMany({
+router.get("/count/:userId", asyncHandler(async (req, res) => {
+
+    const items = await prisma.cart.findMany({
         where: {
-            userId: Number(req.params.userId),
-            type: "cart"
+            userId: Number(req.params.userId)
         }
     });
-    res.json(items.length);
+
+    res.json({
+        count: items.length
+    });
+}));
+
+router.put("/:id", asyncHandler(async (req, res) => {
+
+    const { quantity } = req.body;
+
+    const item = await prisma.cart.update({
+        where: {
+            id: Number(req.params.id)
+        },
+        data: {
+            quantity: Number(quantity)
+        }
+    });
+
+    res.json(item);
 }));
 
 router.delete("/:id", asyncHandler(async (req, res) => {
-    await prisma.cart_Favorite.delete({
+
+    await prisma.cart.delete({
         where: {
-            id: Number(req.params.id),
-            type: "cart"
+            id: Number(req.params.id)
         }
     });
 
     res.sendStatus(204);
 }));
-
 
 export default router;

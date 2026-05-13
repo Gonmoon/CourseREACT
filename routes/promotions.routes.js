@@ -8,41 +8,97 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 router.post("/", asyncHandler(async (req, res) => {
-    const promo = await prisma.promotion.create({
+
+    const {
+        title,
+        description,
+        discount
+    } = req.body;
+
+    if (
+        !title ||
+        !description ||
+        !discount
+    ) {
+        return res.status(400).json({
+            message: "Все поля обязательны"
+        });
+    }
+
+    const promotion = await prisma.promotion.create({
         data: {
-            ticketId: Number(req.body.ticketId),
-            title: req.body.title,
-            discount: Number(req.body.discount),
-            validUntil: new Date(req.body.validUntil)
+            title,
+            description,
+            discount: Number(discount)
         }
     });
-    res.json(promo);
+
+    res.status(201).json(promotion);
 }));
 
 router.get("/", asyncHandler(async (req, res) => {
-    const promos = await prisma.promotion.findMany();
-    res.json(promos);
+
+    const promotions = await prisma.promotion.findMany({
+        include: {
+            tickets: true
+        }
+    });
+
+    res.json(promotions);
+}));
+
+router.get("/:id", asyncHandler(async (req, res) => {
+
+    const promotion = await prisma.promotion.findUnique({
+        where: {
+            id: Number(req.params.id)
+        },
+        include: {
+            tickets: true
+        }
+    });
+
+    if (!promotion) {
+        return res.status(404).json({
+            message: "Акция не найдена"
+        });
+    }
+
+    res.json(promotion);
 }));
 
 router.put("/:id", asyncHandler(async (req, res) => {
-    const promo = await prisma.promotion.update({
+
+    const {
+        title,
+        description,
+        discount
+    } = req.body;
+
+    const promotion = await prisma.promotion.update({
         where: {
             id: Number(req.params.id)
         },
         data: {
-            title: req.body.title,
-            discount: Number(req.body.discount)
+            title,
+            description,
+            discount: discount
+                ? Number(discount)
+                : undefined
         }
     });
-    res.json(promo);
+
+    res.json(promotion);
 }));
 
 router.delete("/:id", asyncHandler(async (req, res) => {
+
     await prisma.promotion.delete({
         where: {
             id: Number(req.params.id)
         }
     });
+
     res.sendStatus(204);
 }));
 

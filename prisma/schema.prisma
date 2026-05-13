@@ -6,90 +6,128 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id             Int             @id @default(autoincrement())
-  firstName      String
-  lastName       String
-  email          String          @unique
-  password       String
-  createdAt      DateTime        @default(now())
-  
-  cartItems      Cart_Favorite[]
-  orders         Web_Order[]
-  reviews        Review[]
-}
 
-model Ticket {
-  id          Int             @id @default(autoincrement())
-  title       String
-  posterUrl   String          
-  dateTime    DateTime
-  basePrice   Float
-  stock       Int
-  
-  promotions  Promotion[]
-  cartItems   Cart_Favorite[]
+model User {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+
+  email      String   @unique
+  firstName  String
+  lastName   String
+  password   String
+
+  carts      Cart[]
+  favorites  Favorite[]
+  orders     Order[]
+
+  @@map("users")
 }
 
 model Promotion {
   id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+
   title       String
-  description String?
+  description String
   discount    Float
-  validUntil  DateTime
-  
-  ticketId    Int
-  ticket      Ticket   @relation(fields: [ticketId], references: [id])
+
+  tickets     Ticket[]
+
+  @@map("promotions")
 }
 
-model Cart_Favorite {
-  id        Int      @id @default(autoincrement())
-  type      String   // 'cart' или 'favorite'
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now())
+model Ticket {
+  id          Int      @id @default(autoincrement())
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  ticketId  Int
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  title       String
+  description String
+  price       Float
+  eventDate   DateTime
+  posterUrl   String
+  quantity    Int
+
+  promotionId Int
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  carts       Cart[]
+  favorites   Favorite[]
+  orders      Order[]
+
+  @@map("tickets")
 }
 
-model Web_Order {
-  id          Int                @id @default(autoincrement())
-  totalAmount Float
-  createdAt   DateTime           @default(now())
+model Cart {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
 
-  userId      Int
-  user        User               @relation(fields: [userId], references: [id])
-  
-  history     History?
-  reviews     Review[]
-  documents   Document_Request[]
+  quantity   Int
+
+  userId     Int
+  ticketId   Int
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
 }
 
-model History {
-  id        Int      @id @default(autoincrement())
-  timestamp DateTime @default(now())
+model Favorite {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
 
-  orderId   Int      @unique
-  order     Web_Order @relation(fields: [orderId], references: [id])
+  userId     Int
+  ticketId   Int
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("favorites")
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+
+  quantity   Int
+  totalPrice Float
+
+  userId     Int
+  ticketId   Int
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  reviews    Review[]
+  documents  OrderDocument[]
+
+  @@map("orders")
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  comment   String
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  orderId   Int
-  order     Web_Order @relation(fields: [orderId], references: [id])
+  content    String
+
+  orderId    Int
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
 }
 
-model Document_Request {
-  id        Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
+model OrderDocument {
+  id         Int          @id @default(autoincrement())
+  createdAt  DateTime     @default(now())
 
-  orderId   Int
-  order     Web_Order @relation(fields: [orderId], references: [id])
+  type       DocumentType
+
+  orderId    Int
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_documents")
+}
+
+enum DocumentType {
+  PDF
+  DOCX
 }

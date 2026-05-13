@@ -9,24 +9,50 @@ const asyncHandler = (fn) => (req, res, next) => {
 
 router.post("/", asyncHandler(async (req, res) => {
 
+    const {
+        title,
+        description,
+        price,
+        eventDate,
+        posterUrl,
+        quantity,
+        promotionId
+    } = req.body;
+
+    if (
+        !title ||
+        !description ||
+        !price ||
+        !eventDate ||
+        !posterUrl ||
+        !quantity ||
+        !promotionId
+    ) {
+        return res.status(400).json({
+            message: "Все поля обязательны"
+        });
+    }
+
     const ticket = await prisma.ticket.create({
         data: {
-            title: req.body.title,
-            posterUrl: req.body.posterUrl,
-            dateTime: new Date(req.body.dateTime),
-            basePrice: Number(req.body.basePrice),
-            stock: Number(req.body.stock)
+            title,
+            description,
+            price: Number(price),
+            eventDate: new Date(eventDate),
+            posterUrl,
+            quantity: Number(quantity),
+            promotionId: Number(promotionId)
         }
     });
 
-    res.json(ticket);
+    res.status(201).json(ticket);
 }));
 
 router.get("/", asyncHandler(async (req, res) => {
 
     const tickets = await prisma.ticket.findMany({
-       include: {
-            promotions: true
+        include: {
+            promotion: true
         }
     });
 
@@ -36,6 +62,7 @@ router.get("/", asyncHandler(async (req, res) => {
 router.get("/search", asyncHandler(async (req, res) => {
 
     const q = String(req.query.q || "");
+
     const tickets = await prisma.ticket.findMany({
         where: {
             title: {
@@ -44,74 +71,86 @@ router.get("/search", asyncHandler(async (req, res) => {
         }
     });
 
-    console.log(tickets);
-
-    if(tickets.length === 0) {
-        res.json({ answer : "Не найдено"});
+    if (tickets.length === 0) {
+        return res.json({
+            message: "Не найдено"
+        });
     }
 
     res.json(tickets);
 }));
 
-
 router.get("/page", asyncHandler(async (req, res) => {
 
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 5;
+
     const tickets = await prisma.ticket.findMany({
         skip: (page - 1) * limit,
         take: limit
     });
 
-    if(tickets.length === 0) {
-        res.json({ answer : "Не найдено"});
+    if (tickets.length === 0) {
+        return res.json({
+            message: "Не найдено"
+        });
     }
 
     res.json(tickets);
 }));
 
 router.get("/sort/price-asc", asyncHandler(async (req, res) => {
+
     const tickets = await prisma.ticket.findMany({
         orderBy: {
-            basePrice: "asc"
+            price: "asc"
         }
     });
+
     res.json(tickets);
 }));
 
 router.get("/sort/price-desc", asyncHandler(async (req, res) => {
+
     const tickets = await prisma.ticket.findMany({
         orderBy: {
-            basePrice: "desc"
+            price: "desc"
         }
     });
+
     res.json(tickets);
 }));
 
 router.get("/sort/date-asc", asyncHandler(async (req, res) => {
+
     const tickets = await prisma.ticket.findMany({
         orderBy: {
-            dateTime: "asc"
+            eventDate: "asc"
         }
     });
+
     res.json(tickets);
 }));
 
 router.get("/sort/date-desc", asyncHandler(async (req, res) => {
+
     const tickets = await prisma.ticket.findMany({
         orderBy: {
-            dateTime: "desc"
+            eventDate: "desc"
         }
     });
+
     res.json(tickets);
 }));
 
-router.get("/sort/stock-desc", asyncHandler(async (req, res) => {
+router.get("/sort/quantity-desc", asyncHandler(async (req, res) => {
+
     const tickets = await prisma.ticket.findMany({
         orderBy: {
-            stock: "desc"
+            quantity: "desc"
         }
     });
+
     res.json(tickets);
 }));
 
@@ -120,26 +159,49 @@ router.get("/:id", asyncHandler(async (req, res) => {
     const ticket = await prisma.ticket.findUnique({
         where: {
             id: Number(req.params.id)
+        },
+        include: {
+            promotion: true
         }
     });
+
+    if (!ticket) {
+        return res.status(404).json({
+            message: "Билет не найден"
+        });
+    }
 
     res.json(ticket);
 }));
 
 router.put("/:id", asyncHandler(async (req, res) => {
 
+    const {
+        title,
+        description,
+        price,
+        eventDate,
+        posterUrl,
+        quantity,
+        promotionId
+    } = req.body;
+
     const ticket = await prisma.ticket.update({
         where: {
             id: Number(req.params.id)
         },
         data: {
-            title: req.body.title,
-            posterUrl: req.body.posterUrl,
-            dateTime: req.body.dateTime
-                ? new Date(req.body.dateTime)
+            title,
+            description,
+            price: price ? Number(price) : undefined,
+            eventDate: eventDate
+                ? new Date(eventDate)
                 : undefined,
-            basePrice: Number(req.body.basePrice),
-            stock: Number(req.body.stock)
+            posterUrl,
+            quantity: quantity ? Number(quantity) : undefined,
+            promotionId: promotionId
+                ? Number(promotionId)
+                : undefined
         }
     });
 
