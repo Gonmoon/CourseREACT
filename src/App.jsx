@@ -4,10 +4,7 @@ import { BurgerMenu } from '@shared/BurgerMenu';
 import { Footer } from '@shared/Footer';
 
 import { Main } from '@pages/main';
-
-const TicketsPage = () => {
-  return <div>Страница билетов</div>;
-};
+import { TicketsPage } from '@pages/tickets';
 
 const ReviewsPage = () => {
   return <div>Страница отзывов</div>;

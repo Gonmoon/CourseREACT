@@ -59,96 +59,28 @@ router.get("/", asyncHandler(async (req, res) => {
     res.json(tickets);
 }));
 
-router.get("/search", asyncHandler(async (req, res) => {
-
+router.get("/page", asyncHandler(async (req, res) => {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+    const sort = req.query.sort;
     const q = String(req.query.q || "");
+
+    const sortMap = {
+        'price-asc': { price: 'asc' },
+        'price-desc': { price: 'desc' },
+        'date-asc': { eventDate: 'asc' },
+        'date-desc': { eventDate: 'desc' },
+    };
 
     const tickets = await prisma.ticket.findMany({
         where: {
             title: {
-                contains: q
-            }
-        }
-    });
-
-    if (tickets.length === 0) {
-        return res.json({
-            message: "Не найдено"
-        });
-    }
-
-    res.json(tickets);
-}));
-
-router.get("/page", asyncHandler(async (req, res) => {
-
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-
-    const tickets = await prisma.ticket.findMany({
+                contains: q,
+            },
+        },
+        orderBy: sortMap[sort] || undefined,
         skip: (page - 1) * limit,
-        take: limit
-    });
-
-    if (tickets.length === 0) {
-        return res.json({
-            message: "Не найдено"
-        });
-    }
-
-    res.json(tickets);
-}));
-
-router.get("/sort/price-asc", asyncHandler(async (req, res) => {
-
-    const tickets = await prisma.ticket.findMany({
-        orderBy: {
-            price: "asc"
-        }
-    });
-
-    res.json(tickets);
-}));
-
-router.get("/sort/price-desc", asyncHandler(async (req, res) => {
-
-    const tickets = await prisma.ticket.findMany({
-        orderBy: {
-            price: "desc"
-        }
-    });
-
-    res.json(tickets);
-}));
-
-router.get("/sort/date-asc", asyncHandler(async (req, res) => {
-
-    const tickets = await prisma.ticket.findMany({
-        orderBy: {
-            eventDate: "asc"
-        }
-    });
-
-    res.json(tickets);
-}));
-
-router.get("/sort/date-desc", asyncHandler(async (req, res) => {
-
-    const tickets = await prisma.ticket.findMany({
-        orderBy: {
-            eventDate: "desc"
-        }
-    });
-
-    res.json(tickets);
-}));
-
-router.get("/sort/quantity-desc", asyncHandler(async (req, res) => {
-
-    const tickets = await prisma.ticket.findMany({
-        orderBy: {
-            quantity: "desc"
-        }
+        take: limit,
     });
 
     res.json(tickets);
