@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShoppingCart, Calendar, Ticket, ArrowRight } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ticketsApi, cartApi, favoritesApi } from './api';
 import { authApi } from '../../auth/api/auth';
+import { ShowMeta } from '../components/ShowMeta';
+import { ShowQuantitySelector } from '../components/ShowQuantitySelector';
+import { ShowActions } from '../components/ShowActions';
 import styles from './ShowDetailPage.module.css';
 
 export const ShowDetailPage = () => {
@@ -111,14 +113,6 @@ export const ShowDetailPage = () => {
   if (error && !ticket) return <div className={styles.centerLayout}><div className={styles.errorBlock}>{error}</div></div>;
   if (!ticket) return null;
 
-  const formattedDate = new Date(ticket.eventDate).toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -132,101 +126,29 @@ export const ShowDetailPage = () => {
         </div>
 
         <div className={styles.infoSection}>
-          <h1 className={styles.title}>{ticket.title}</h1>
-          
-          <div className={styles.metaList}>
-            <div className={styles.metaItem}>
-              <Calendar size={20} className={styles.icon} />
-              <span>{formattedDate}</span>
-            </div>
-            <div className={styles.metaItem}>
-              <Ticket size={20} className={styles.icon} />
-              <span>Осталось билетов: <strong>{ticket.quantity}</strong> шт.</span>
-            </div>
-          </div>
-
-          <div className={styles.descriptionContainer}>
-            <h3>О спектакле</h3>
-            <p className={styles.description}>{ticket.description}</p>
-          </div>
-
-          {ticket.promotion && (
-            <div className={styles.promotionBox}>
-              <h4>{ticket.promotion.title}</h4>
-              <p>{ticket.promotion.description}</p>
-            </div>
-          )}
-
-          <div className={styles.priceContainer}>
-            <span className={styles.priceLabel}>Стоимость билета</span>
-            <span className={styles.priceValue}>{ticket.price} ₽</span>
-          </div>
+          <ShowMeta ticket={ticket} />
 
           {user && ticket.quantity > 0 && !cartItemId && (
-            <div className={styles.quantitySelector}>
-              <span className={styles.quantityLabel}>Количество:</span>
-              <div className={styles.quantityControls}>
-                <button 
-                  type="button"
-                  disabled={quantity <= 1 || actionLoading} 
-                  onClick={() => setQuantity(prev => prev - 1)}
-                >
-                  -
-                </button>
-                <input 
-                  type="number" 
-                  value={quantity} 
-                  readOnly 
-                />
-                <button 
-                  type="button"
-                  disabled={quantity >= ticket.quantity || actionLoading} 
-                  onClick={() => setQuantity(prev => prev + 1)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            <ShowQuantitySelector 
+              quantity={quantity}
+              maxQuantity={ticket.quantity}
+              actionLoading={actionLoading}
+              onChange={setQuantity}
+            />
           )}
 
           {error && <div className={styles.inlineError}>{error}</div>}
           {successMessage && <div className={styles.inlineSuccess}>{successMessage}</div>}
 
-          <div className={styles.actionsContainer}>
-            <div className={styles.actions}>
-              <button 
-                className={`${styles.buyButton} ${cartItemId ? styles.inCart : ''}`} 
-                onClick={handleCartAction}
-                disabled={actionLoading || (ticket.quantity <= 0 && !cartItemId)}
-              >
-                <ShoppingCart size={20} />
-                {ticket.quantity <= 0 && !cartItemId 
-                  ? 'Билетов нет' 
-                  : !user 
-                    ? 'Купить билет' 
-                    : cartItemId 
-                      ? 'Убрать из корзины' 
-                      : 'В корзину'
-                }
-              </button>
-
-              <button 
-                className={`${styles.favoriteButton} ${favoriteItemId ? styles.inFavorites : ''}`} 
-                onClick={handleFavoritesAction}
-                disabled={actionLoading}
-                title={favoriteItemId ? "Убрать из избранного" : "В избранное"}
-              >
-                <Heart size={20} fill={favoriteItemId ? "currentColor" : "none"} />
-              </button>
-            </div>
-
-            {cartItemId && (
-              <Link to="/cart" className={styles.checkoutButton}>
-                <span>Перейти к покупке</span>
-                <ArrowRight size={20} />
-              </Link>
-            )}
-          </div>
+          <ShowActions 
+            user={user}
+            ticket={ticket}
+            cartItemId={cartItemId}
+            favoriteItemId={favoriteItemId}
+            actionLoading={actionLoading}
+            onCartAction={handleCartAction}
+            onFavoritesAction={handleFavoritesAction}
+          />
         </div>
       </div>
     </div>
