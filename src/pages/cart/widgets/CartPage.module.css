@@ -1,0 +1,204 @@
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: #0f0f0f;
+  color: white;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  background: #181818;
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.title {
+  font-size: 28px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+}
+
+.summaryCard {
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.ticketInfo h2 {
+  font-size: 20px;
+  margin: 0 0 12px 0;
+  color: #fff;
+}
+
+.ticketInfo p {
+  margin: 6px 0;
+  color: #aaa;
+  font-size: 15px;
+}
+
+.divider {
+  height: 1px;
+  background: #2d2d2d;
+  margin: 20px 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.totalValue {
+  font-size: 24px;
+  color: #2ecc71;
+  font-weight: 700;
+}
+
+.payButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #d4af37;
+  color: black;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.payButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.payButton:disabled {
+  background: #333;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.successBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.successIcon {
+  color: #2ecc71;
+  margin-bottom: 20px;
+}
+
+.successText {
+  color: #ccc;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+}
+
+.downloadActions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.downloadButton {
+  display: flex;
+  align-items: center;
+  background: #222;
+  border: 1px solid #333;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.downloadButton:hover {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+.downloadButton span {
+  flex: 1;
+  text-align: left;
+  margin-left: 12px;
+}
+
+.homeButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #aaa;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.homeButton:hover {
+  color: white;
+  border-color: white;
+}
+
+.inlineError {
+  background: rgba(255, 92, 92, 0.1);
+  border: 1px solid rgba(255, 92, 92, 0.2);
+  color: #ff5c5c;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.center {
+  min-height: 100vh;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: #d4af37;
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  color: #ff5c5c;
+  font-size: 18px;
+  background: #181818;
+  padding: 24px 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 92, 92, 0.2);
+}

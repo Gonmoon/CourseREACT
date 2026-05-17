@@ -7,6 +7,7 @@ import { Main } from '@pages/main';
 import { TicketsPage } from '@pages/tickets';
 import { AuthPage } from '@pages/auth';
 import { ShowDetailPage } from '@pages/detail';
+import { CartPage } from '@pages/cart';
 
 const ReviewsPage = () => {
   return <div>Страница отзывов</div>;
@@ -15,11 +16,6 @@ const ReviewsPage = () => {
 const Profile = () => {
   return <div>Страница user</div>;
 };
-
-const Cart = () => {
-  return <div>Страница корзины</div>;
-};
-
 
 export const App = () => {
   return (
@@ -56,7 +52,7 @@ export const App = () => {
 
         <Route
           path="/cart"
-          element={<Cart />}
+          element={<CartPage />}
         />
       </Routes>
 

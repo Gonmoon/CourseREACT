@@ -56,7 +56,7 @@ export const ShowDetailPage = () => {
 
   const handleActionWithAuth = async (actionCallback) => {
     if (!user) {
-      navigate('/register');
+      navigate('/auth');
       return;
     }
     
