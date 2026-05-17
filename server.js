@@ -44,7 +44,7 @@ app.use("/api/usersAdmin", usersAdminRoutes);
 app.use("/api/tickets", ticketsRoutes);
 app.use("/api/promotions", promotionsRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/favorite", favoriteRoutes);
+app.use("/api/favorites", favoriteRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/documents", documentsRoutes);

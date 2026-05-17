@@ -1,0 +1,1 @@
+export { ShowDetailPage } from './widgets/ShowDetailPage'
