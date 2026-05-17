@@ -38,13 +38,19 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
 
   z-index: 1001;
 
-  transition: 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.35s ease,
+              color 0.35s ease;
 }
 
 .burgerButton:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
   border-color: #d4af37;
   color: #d4af37;
+}
+
+.burgerButton:active {
+  transform: scale(0.96);
 }
 
 .overlay {
@@ -56,7 +62,7 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
   opacity: 0;
   visibility: hidden;
 
-  transition: 0.3s ease;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
 
   z-index: 998;
 }
@@ -73,7 +79,6 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
 
   width: 400px;
   max-width: 100%;
-
   height: 100vh;
 
   background: #101010;
@@ -84,7 +89,7 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
   flex-direction: column;
   justify-content: space-between;
 
-  transition: right 0.4s ease;
+  transition: right 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 
   z-index: 999;
 
@@ -99,8 +104,8 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
 
 .top {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .logo {
@@ -129,12 +134,112 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-  transition: 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.35s ease,
+              padding-left 0.35s ease;
 }
 
 .link:hover {
   color: #d4af37;
-  transform: translateX(6px);
+  transform: translateX(10px);
+  padding-left: 6px;
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  text-decoration: none;
+  color: white;
+
+  padding: 16px;
+
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              background 0.35s ease,
+              border-color 0.35s ease;
+}
+
+.userBox:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  color: black;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.userName {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.userEmail {
+  font-size: 14px;
+  color: #b5b5b5;
+}
+
+.login {
+  color: white;
+  text-decoration: none;
+
+  padding: 14px;
+  display: block;
+
+  font-size: 18px;
+
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.35s ease;
+}
+
+.login:hover {
+  color: #d4af37;
+  transform: translateX(8px);
+}
+
+.logout {
+  width: 100%;
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid #2d2d2d;
+
+  background: transparent;
+  color: white;
+
+  cursor: pointer;
+  margin-bottom: 12px;
+
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  font-size: 16px;
+}
+
+.logout:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+  transform: translateY(-2px);
+}
+
+.logout:active {
+  transform: scale(0.97);
 }
 
 .bottom {
@@ -162,5 +267,46 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
 
   .link {
     font-size: 24px;
+  }
+
+  .userName {
+    font-size: 16px;
+  }
+
+  .userEmail {
+    font-size: 13px;
+  }
+
+  .avatar {
+    width: 46px;
+    height: 46px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .menu {
+    width: 100%;
+    right: -100%;
+    padding: 28px 20px;
+  }
+
+  .open {
+    right: 0;
+  }
+
+  .burgerButton {
+    width: 56px;
+    height: 56px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .link {
+    font-size: 22px;
+  }
+
+  .userBox {
+    padding: 14px;
   }
 }

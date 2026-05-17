@@ -41,12 +41,12 @@ export const TicketsPage = () => {
 
   const handleSearch = (value) => {
     setQuery(value);
-    setPage(1); // важно сбрасывать страницу
+    setPage(1);
   };
 
   const handleSort = (type) => {
     setSort(type);
-    setPage(1); // важно сбрасывать страницу
+    setPage(1);
   };
 
   return (

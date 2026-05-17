@@ -1,86 +1,108 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import { prisma } from "../prisma/prisma.js";
+import { generateToken } from "../utils/auth.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 const asyncHandler = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+  Promise.resolve(fn(req, res, next)).catch(next);
 };
 
-router.post("/", asyncHandler(async (req, res) => {
+router.post("/register", asyncHandler(async (req, res) => {
+  const { email, firstName, lastName, password } = req.body;
 
-    const { email, firstName, lastName, password } = req.body;
+  if (!email || !firstName || !lastName || !password) {
+    return res.status(400).json({ message: "Все поля обязательны" });
+  }
 
-    if (!email || !firstName || !lastName || !password) {
-        return res.status(400).json({
-            message: "Все поля обязательны"
-        });
-    }
+  const exists = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    const user = await prisma.user.create({
-        data: {
-            email,
-            firstName,
-            lastName,
-            password
-        }
-    });
+  if (exists) {
+    return res.status(400).json({ message: "Email уже занят" });
+  }
 
-    res.status(201).json(user);
+  const hash = await bcrypt.hash(password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      firstName,
+      lastName,
+      password: hash,
+    },
+  });
+
+  const token = generateToken(user);
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false, // true в production (https)
+  });
+
+  res.status(201).json({
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
 }));
 
-router.get("/", asyncHandler(async (req, res) => {
 
-    const users = await prisma.user.findMany();
+router.post("/login", asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    res.json(users);
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Неверный email или пароль" });
+  }
+
+  const valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) {
+    return res.status(400).json({ message: "Неверный email или пароль" });
+  }
+
+  const token = generateToken(user);
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+  });
+
+  res.json({
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
 }));
 
-router.get("/:id", asyncHandler(async (req, res) => {
+router.post("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "ok" });
+});
 
-    const id = Number(req.params.id);
+router.get("/me", authMiddleware, asyncHandler(async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+    },
+  });
 
-    const user = await prisma.user.findUnique({
-        where: { id }
-    });
-
-    if (!user) {
-        return res.status(404).json({
-            message: "Пользователь не найден"
-        });
-    }
-
-    res.json(user);
-}));
-
-router.put("/:id", asyncHandler(async (req, res) => {
-
-    const id = Number(req.params.id);
-
-    const { email, firstName, lastName, password } = req.body;
-
-    const user = await prisma.user.update({
-        where: { id },
-        data: {
-            email,
-            firstName,
-            lastName,
-            password
-        }
-    });
-
-    res.json(user);
-}));
-
-router.delete("/:id", asyncHandler(async (req, res) => {
-
-    const id = Number(req.params.id);
-
-    await prisma.user.delete({
-        where: { id }
-    });
-
-    res.sendStatus(204);
+  res.json(user);
 }));
 
 export default router;

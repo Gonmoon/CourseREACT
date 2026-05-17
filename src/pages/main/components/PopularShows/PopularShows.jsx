@@ -1,39 +1,43 @@
 import { useEffect, useState } from 'react';
-
 import styles from './PopularShows.module.css';
-
-import {
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ShowCard } from '@shared/ShowCard';
 import { ticketsApi } from '../../api/api';
 
 export const PopularShows = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeSort, setActiveSort] = useState('date-desc');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [cardsPerView, setCardsPerView] = useState(3);
 
-  const [activeSort, setActiveSort] =
-    useState('date-desc');
+  const fetchTickets = async (sortType) => {
+    try {
+      setLoading(true);
+      setCurrentSlide(0);
 
-  const [currentSlide, setCurrentSlide] =
-    useState(0);
+      const data = await ticketsApi.getPage({
+        sort: sortType,
+        limit: 12,
+      });
 
-  const [cardsPerView, setCardsPerView] =
-    useState(3);
+      setTickets(data || []);
+    } catch (error) {
+      console.error('Ошибка при загрузке билетов:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    loadTickets();
+    fetchTickets(activeSort);
   }, []);
 
   useEffect(() => {
     const updateCardsPerView = () => {
       if (window.innerWidth <= 768) {
         setCardsPerView(1);
-      } else if (
-        window.innerWidth <= 1200
-      ) {
+      } else if (window.innerWidth <= 1200) {
         setCardsPerView(2);
       } else {
         setCardsPerView(3);
@@ -41,83 +45,18 @@ export const PopularShows = () => {
     };
 
     updateCardsPerView();
-
-    window.addEventListener(
-      'resize',
-      updateCardsPerView
-    );
-
-    return () => {
-      window.removeEventListener(
-        'resize',
-        updateCardsPerView
-      );
-    };
+    window.addEventListener('resize', updateCardsPerView);
+    return () => window.removeEventListener('resize', updateCardsPerView);
   }, []);
 
-  const loadTickets = async () => {
-    try {
-      setLoading(true);
-
-      const data =
-        await ticketsApi.sortByDateDesc();
-
-      setTickets(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSort = async (type) => {
-    try {
-      setActiveSort(type);
-
-      setLoading(true);
-
-      setCurrentSlide(0);
-
-      let data = [];
-
-      switch (type) {
-        case 'price-asc':
-          data =
-            await ticketsApi.sortByPriceAsc();
-          break;
-
-        case 'price-desc':
-          data =
-            await ticketsApi.sortByPriceDesc();
-          break;
-
-        case 'date-desc':
-          data =
-            await ticketsApi.sortByDateDesc();
-          break;
-
-        case 'date-asc':
-          data =
-            await ticketsApi.sortByDateAsc();
-          break;
-
-        default:
-          data = await ticketsApi.getAll();
-      }
-
-      setTickets(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSortChange = (type) => {
+    if (type === activeSort) return;
+    setActiveSort(type);
+    fetchTickets(type);
   };
 
   const nextSlide = () => {
-    if (
-      currentSlide <
-      tickets.length - cardsPerView
-    ) {
+    if (currentSlide < tickets.length - cardsPerView) {
       setCurrentSlide((prev) => prev + 1);
     }
   };
@@ -128,55 +67,34 @@ export const PopularShows = () => {
     }
   };
 
+  const dotsCount = Math.max(0, tickets.length - cardsPerView + 1);
+
   return (
     <section className={styles.section}>
       <div className={styles.top}>
         <div>
-          <span className={styles.subtitle}>
-            Афиша театра
-          </span>
-
-          <h2 className={styles.title}>
-            Популярные спектакли
-          </h2>
+          <span className={styles.subtitle}>Афиша театра</span>
+          <h2 className={styles.title}>Популярные спектакли</h2>
         </div>
 
         <div className={styles.actions}>
           <button
-            className={`${styles.sortButton} ${
-              activeSort === 'date-desc'
-                ? styles.active
-                : ''
-            }`}
-            onClick={() =>
-              handleSort('date-desc')
-            }
+            className={`${styles.sortButton} ${activeSort === 'date-desc' ? styles.active : ''}`}
+            onClick={() => handleSortChange('date-desc')}
           >
             Новые
           </button>
 
           <button
-            className={`${styles.sortButton} ${
-              activeSort === 'price-asc'
-                ? styles.active
-                : ''
-            }`}
-            onClick={() =>
-              handleSort('price-asc')
-            }
+            className={`${styles.sortButton} ${activeSort === 'price-asc' ? styles.active : ''}`}
+            onClick={() => handleSortChange('price-asc')}
           >
             Дешевле
           </button>
 
           <button
-            className={`${styles.sortButton} ${
-              activeSort === 'price-desc'
-                ? styles.active
-                : ''
-            }`}
-            onClick={() =>
-              handleSort('price-desc')
-            }
+            className={`${styles.sortButton} ${activeSort === 'price-desc' ? styles.active : ''}`}
+            onClick={() => handleSortChange('price-desc')}
           >
             Дороже
           </button>
@@ -184,10 +102,8 @@ export const PopularShows = () => {
       </div>
 
       {loading ? (
-        <div className={styles.loader}>
-          Загрузка спектаклей...
-        </div>
-      ) : tickets?.length ? (
+        <div className={styles.loader}>Загрузка спектаклей...</div>
+      ) : tickets.length > 0 ? (
         <>
           <div className={styles.sliderWrapper}>
             <button
@@ -202,17 +118,11 @@ export const PopularShows = () => {
               <div
                 className={styles.track}
                 style={{
-                  transform: `translateX(-${
-                    currentSlide *
-                    (100 / cardsPerView)
-                  }%)`,
+                  transform: `translateX(-${currentSlide * (100 / cardsPerView)}%)`,
                 }}
               >
                 {tickets.map((ticket) => (
-                  <div
-                    className={styles.slide}
-                    key={ticket.id}
-                  >
+                  <div className={styles.slide} key={ticket.id}>
                     <ShowCard
                       id={ticket.id}
                       title={ticket.title}
@@ -229,41 +139,26 @@ export const PopularShows = () => {
             <button
               className={styles.arrow}
               onClick={nextSlide}
-              disabled={
-                currentSlide >=
-                tickets.length -
-                  cardsPerView
-              }
+              disabled={currentSlide >= tickets.length - cardsPerView}
             >
               <ChevronRight size={24} />
             </button>
           </div>
 
-          <div className={styles.dots}>
-            {Array.from({
-              length:
-                tickets.length -
-                cardsPerView +
-                1,
-            }).map((_, index) => (
-              <button
-                key={index}
-                className={`${styles.dot} ${
-                  currentSlide === index
-                    ? styles.activeDot
-                    : ''
-                }`}
-                onClick={() =>
-                  setCurrentSlide(index)
-                }
-              />
-            ))}
-          </div>
+          {dotsCount > 1 && (
+            <div className={styles.dots}>
+              {Array.from({ length: dotsCount }).map((_, index) => (
+                <button
+                  key={index}
+                  className={`${styles.dot} ${currentSlide === index ? styles.activeDot : ''}`}
+                  onClick={() => setCurrentSlide(index)}
+                />
+              ))}
+            </div>
+          )}
         </>
       ) : (
-        <div className={styles.empty}>
-          Спектакли не найдены
-        </div>
+        <div className={styles.empty}>Спектакли не найдены</div>
       )}
     </section>
   );

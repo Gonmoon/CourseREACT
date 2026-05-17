@@ -5,14 +5,16 @@ import { Footer } from '@shared/Footer';
 
 import { Main } from '@pages/main';
 import { TicketsPage } from '@pages/tickets';
+import { AuthPage } from '@pages/auth';
 
 const ReviewsPage = () => {
   return <div>Страница отзывов</div>;
 };
 
-const AuthPage = () => {
-  return <div>Вход и регистрация</div>;
+const Profile = () => {
+  return <div>Страница user</div>;
 };
+
 
 export const App = () => {
   return (
@@ -35,6 +37,11 @@ export const App = () => {
         <Route
           path="/auth"
           element={<AuthPage />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
         />
       </Routes>
 
