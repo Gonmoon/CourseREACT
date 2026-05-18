@@ -51,6 +51,7 @@
   padding: 10px 18px;
   border-radius: 8px;
   transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
 }
 
 .backLink:hover {
@@ -165,12 +166,6 @@
   align-items: start;
 }
 
-@media (max-width: 1024px) {
-  .cartLayout {
-    grid-template-columns: 1fr;
-  }
-}
-
 .itemsList {
   display: flex;
   flex-direction: column;
@@ -186,13 +181,6 @@
   border: 1px solid #2d2d2d;
   border-radius: 14px;
   gap: 20px;
-}
-
-@media (max-width: 768px) {
-  .card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 .cardMain {
@@ -270,13 +258,6 @@
   display: flex;
   align-items: center;
   gap: 32px;
-}
-
-@media (max-width: 768px) {
-  .cardActions {
-    width: 100%;
-    justify-content: space-between;
-  }
 }
 
 .counter {
@@ -439,13 +420,6 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
-  .favoriteActions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
 .moveToCartBtn {
   display: flex;
   align-items: center;
@@ -527,5 +501,154 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cartLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 20px 12px;
+  }
+
+  .container {
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+
+  .header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .backLink {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .tabsRow {
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabButton {
+    padding: 10px 18px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .cardMain {
+    width: 100%;
+  }
+
+  .cardActions {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #2d2d2d;
+    padding-top: 14px;
+    gap: 16px;
+  }
+
+  .favoriteActions {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #2d2d2d;
+    padding-top: 14px;
+  }
+
+  .moveToCartBtn {
+    flex-grow: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .backLink {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .cardMain {
+    gap: 12px;
+  }
+
+  .iconContainer {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cardInfo h3 {
+    font-size: 16px;
+  }
+
+  .meta {
+    font-size: 13px;
+  }
+
+  .cardActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .counter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .counterBtn {
+    flex-grow: 1;
+  }
+
+  .countValue {
+    flex-grow: 2;
+  }
+
+  .priceBlock {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .totalPriceContainer {
+    align-items: flex-start;
+  }
+
+  .toast {
+    top: auto;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    font-size: 14px;
+    padding: 12px 16px;
+    box-sizing: border-box;
   }
 }
