@@ -73,6 +73,7 @@
   font-weight: 700;
   color: white;
   margin: 0 0 10px 0;
+  text-align: center;
 }
 
 .roleBadge {
@@ -190,12 +191,6 @@
   margin-bottom: 30px;
 }
 
-@media (max-width: 640px) {
-  .infoGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .fullWidthCard {
   grid-column: 1 / -1;
 }
@@ -288,13 +283,6 @@
 .formRow {
   display: flex;
   gap: 16px;
-}
-
-@media (max-width: 500px) {
-  .formRow {
-    flex-direction: column;
-    gap: 12px;
-  }
 }
 
 .input {
@@ -612,6 +600,116 @@
 @keyframes slideIn {
   from {
     transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 20px 12px;
+  }
+
+  .container {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+
+  .header {
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+
+  .avatarLarge {
+    width: 86px;
+    height: 86px;
+    font-size: 28px;
+  }
+
+  .fullName {
+    font-size: 22px;
+  }
+
+  .ordersSection {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .toastNotification {
+    top: auto;
+    bottom: 20px;
+    left: 12px;
+    right: 12px;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 14px;
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@media (max-width: 500px) {
+  .header {
+    padding-top: 40px;
+  }
+
+  .backLink {
+    top: -10px;
+  }
+
+  .combinedNavButton {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .combinedBadges {
+    width: 100%;
+    justify-content: space-around;
+    box-sizing: border-box;
+    padding: 8px 12px;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .editActions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .saveBtn, .cancelBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .submitReviewBtn, .cancelReviewBtn {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
     opacity: 0;
   }
   to {
