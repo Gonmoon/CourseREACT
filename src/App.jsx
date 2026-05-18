@@ -8,14 +8,12 @@ import { TicketsPage } from '@pages/tickets';
 import { AuthPage } from '@pages/auth';
 import { ShowDetailPage } from '@pages/detail';
 import { CartPage } from '@pages/cart';
+import { ProfilePage } from '@pages/profile';
 
 const ReviewsPage = () => {
   return <div>Страница отзывов</div>;
 };
 
-const Profile = () => {
-  return <div>Страница user</div>;
-};
 
 export const App = () => {
   return (
@@ -47,7 +45,7 @@ export const App = () => {
 
         <Route
           path="/profile"
-          element={<Profile />}
+          element={<ProfilePage />}
         />
 
         <Route

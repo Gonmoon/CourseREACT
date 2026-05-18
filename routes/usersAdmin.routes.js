@@ -1,4 +1,5 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import { prisma } from "../prisma/prisma.js";
 
 const router = express.Router();
@@ -8,7 +9,6 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 router.post("/", asyncHandler(async (req, res) => {
-
     const { email, firstName, lastName, password } = req.body;
 
     if (!email || !firstName || !lastName || !password) {
@@ -17,12 +17,14 @@ router.post("/", asyncHandler(async (req, res) => {
         });
     }
 
+    const hash = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
         data: {
             email,
             firstName,
             lastName,
-            password
+            password: hash
         }
     });
 
@@ -30,14 +32,11 @@ router.post("/", asyncHandler(async (req, res) => {
 }));
 
 router.get("/", asyncHandler(async (req, res) => {
-
     const users = await prisma.user.findMany();
-
     res.json(users);
 }));
 
 router.get("/:id", asyncHandler(async (req, res) => {
-
     const id = Number(req.params.id);
 
     const user = await prisma.user.findUnique({
@@ -54,26 +53,28 @@ router.get("/:id", asyncHandler(async (req, res) => {
 }));
 
 router.put("/:id", asyncHandler(async (req, res) => {
-
     const id = Number(req.params.id);
-
     const { email, firstName, lastName, password } = req.body;
+
+    const updateData = {
+        email,
+        firstName,
+        lastName
+    };
+
+    if (password) {
+        updateData.password = await bcrypt.hash(password, 10);
+    }
 
     const user = await prisma.user.update({
         where: { id },
-        data: {
-            email,
-            firstName,
-            lastName,
-            password
-        }
+        data: updateData
     });
 
     res.json(user);
 }));
 
 router.delete("/:id", asyncHandler(async (req, res) => {
-
     const id = Number(req.params.id);
 
     await prisma.user.delete({

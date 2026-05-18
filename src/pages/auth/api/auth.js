@@ -17,4 +17,8 @@ export const authApi = {
     }
   },
   logout: () => api.post('/logout'),
+  updateProfile: async (id, data) => {
+    const response = await axios.put(`/api/usersAdmin/${id}`, data);
+    return response.data;
+  },
 };
