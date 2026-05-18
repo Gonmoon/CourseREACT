@@ -43,7 +43,7 @@ export const CartPage = () => {
         const items = await cartApi.getByUserId(userData.id);
         
         if (!items || items.length === 0) {
-          setError('Ваша корзина пуста. Нечего оформлять.');
+          setError('Ваша корзина пуста.');
           return;
         }
 
@@ -51,7 +51,7 @@ export const CartPage = () => {
           const ticketData = await ticketsApi.getById(item.ticketId);
           
           if (!ticketData) {
-            setError('Информация о билете для одного из товаров не найдена');
+            setError('Информация о билете не найдена');
             return;
           }
 
@@ -61,7 +61,7 @@ export const CartPage = () => {
           }
 
           if (item.quantity > ticketData.quantity) {
-            setError(`Недостаточно билетов на "${ticketData.title}". Доступно: ${ticketData.quantity} шт., в корзине: ${item.quantity} шт.`);
+            setError(`Недостаточно билетов на "${ticketData.title}". Доступно: ${ticketData.quantity} шт.`);
             return;
           }
           
@@ -70,7 +70,7 @@ export const CartPage = () => {
 
         setCartItems(items);
       } catch (err) {
-        setError('Ошибка при загрузке данных корзины из базы');
+        setError('Ошибка при загрузке данных корзины');
       } finally {
         setLoading(false);
       }
@@ -87,12 +87,17 @@ export const CartPage = () => {
       setIsProcessing(true);
       setError(null);
 
+      const updates = [];
       for (const item of cartItems) {
         const currentTicket = await ticketsApi.getById(item.ticketId);
         if (item.quantity > currentTicket.quantity) {
           setError(`Ошибка: билеты на "${currentTicket.title}" закончились или их количество изменилось. Доступно: ${currentTicket.quantity} шт.`);
           return;
         }
+        updates.push({
+          id: item.ticketId,
+          newQuantity: currentTicket.quantity - item.quantity
+        });
       }
 
       const response = await ordersApi.create({
@@ -106,11 +111,11 @@ export const CartPage = () => {
       });
 
       await Promise.all(
-        cartItems.map(item => 
-          cartApi.remove(item.id).catch(cartErr => 
-            console.error(`Не удалось удалить товар ${item.id} из корзины после покупки`, cartErr)
-          )
-        )
+        updates.map(upd => ticketsApi.update(upd.id, { quantity: upd.newQuantity }))
+      );
+
+      await Promise.all(
+        cartItems.map(item => cartApi.remove(item.id))
       );
 
       setOrderSuccess(response);

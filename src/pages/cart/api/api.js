@@ -13,6 +13,10 @@ export const ticketsApi = {
   getById: async (id) => {
     const response = await instance.get(`/tickets/${id}`);
     return response.data;
+  },
+  update: async (id, data) => {
+    const response = await instance.put(`/tickets/${id}`, data);
+    return response.data;
   }
 };
 
@@ -71,3 +75,4 @@ export const documentsApi = {
     return response.data;
   }
 };
+
