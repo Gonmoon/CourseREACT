@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Shield, LogOut, ArrowLeft, Ticket, MessageSquare, ShoppingCart, Heart, Edit2, Check, X } from 'lucide-react';
+import { 
+  User, Mail, Shield, LogOut, ArrowLeft, Ticket, 
+  MessageSquare, ShoppingCart, Heart, Edit2, Check, X, AlertCircle 
+} from 'lucide-react';
 import { authApi } from '../../auth/api/auth';
 import { cartApi, favoritesApi, ordersApi, reviewsApi } from './api'; 
 import styles from './ProfilePage.module.css';
@@ -13,6 +16,8 @@ export const ProfilePage = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
 
+  const [notification, setNotification] = useState({ message: '', type: '', id: null });
+
   const [activeOrderId, setActiveOrderId] = useState(null);
   const [reviewContent, setReviewContent] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
@@ -20,6 +25,14 @@ export const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ firstName: '', lastName: '', password: '', confirmPassword: '' });
   const [updateLoading, setUpdateLoading] = useState(false);
+
+  const showNotification = (message, type = 'success') => {
+    const id = Date.now();
+    setNotification({ message, type, id });
+    setTimeout(() => {
+      setNotification(prev => prev.id === id ? { message: '', type: '', id: null } : prev);
+    }, 4000);
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -66,12 +79,18 @@ export const ProfilePage = () => {
       await authApi.logout();
       navigate('/auth');
     } catch (err) {
-      console.error('Ошибка при выходе:', err);
+      console.error(err);
     }
   };
 
   const handleSendReview = async (orderId) => {
     if (!reviewContent.trim()) return;
+
+    const targetOrder = orders.find(o => o.id === orderId);
+    if (targetOrder?.review) {
+      showNotification('Вы уже оставили отзыв к этому заказу', 'error');
+      return;
+    }
 
     try {
       setReviewLoading(true);
@@ -88,9 +107,9 @@ export const ProfilePage = () => {
       
       setReviewContent('');
       setActiveOrderId(null);
-      alert('Отзыв успешно отправлен!');
+      showNotification('Отзыв успешно отправлен!');
     } catch (err) {
-      alert(err?.response?.data?.message || 'Не удалось отправить отзыв');
+      showNotification(err?.response?.data?.message || 'Не удалось отправить отзыв', 'error');
     } finally {
       setReviewLoading(false);
     }
@@ -99,12 +118,12 @@ export const ProfilePage = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!editForm.firstName.trim() || !editForm.lastName.trim()) {
-      alert('Имя и фамилия не могут быть пустыми');
+      showNotification('Имя и фамилия не могут быть пустыми', 'error');
       return;
     }
 
     if (editForm.password && editForm.password !== editForm.confirmPassword) {
-      alert('Пароли не совпадают');
+      showNotification('Пароли не совпадают', 'error');
       return;
     }
 
@@ -123,9 +142,9 @@ export const ProfilePage = () => {
       setUser(updatedUser);
       setIsEditing(false);
       setEditForm(prev => ({ ...prev, password: '', confirmPassword: '' }));
-      alert('Данные успешно обновлены!');
+      showNotification('Данные успешно обновлены!');
     } catch (err) {
-      alert(err?.response?.data?.message || 'Не удалось обновить профиль');
+      showNotification(err?.response?.data?.message || 'Не удалось обновить профиль', 'error');
     } finally {
       setUpdateLoading(false);
     }
@@ -150,6 +169,13 @@ export const ProfilePage = () => {
 
   return (
     <div className={styles.wrapper}>
+      {notification.message && (
+        <div className={`${styles.toastNotification} ${notification.type === 'error' ? styles.toastError : styles.toastSuccess}`}>
+          {notification.type === 'error' ? <AlertCircle size={20} /> : <Check size={20} />}
+          <span>{notification.message}</span>
+        </div>
+      )}
+
       <div className={styles.container}>
         <div className={styles.header}>
           <button className={styles.backLink} onClick={() => navigate(-1)}>
@@ -238,7 +264,7 @@ export const ProfilePage = () => {
                     <input
                       type="password"
                       className={styles.input}
-                      placeholder="Оставьте пустым, если не хотите менять"
+                      placeholder="Оставьте пустым"
                       value={editForm.password}
                       onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
                       disabled={updateLoading}
@@ -260,7 +286,7 @@ export const ProfilePage = () => {
                 <div className={styles.editActions}>
                   <button type="submit" className={styles.saveBtn} disabled={updateLoading}>
                     <Check size={16} />
-                    <span>Сохранить</span>
+                    <span>{updateLoading ? 'Сохранение...' : 'Сохранить'}</span>
                   </button>
                   <button 
                     type="button" 
@@ -330,7 +356,7 @@ export const ProfilePage = () => {
                   <div className={styles.reviewBlock}>
                     {order.review ? (
                       <div className={styles.reviewStatus}>
-                        <MessageSquare size={16} />
+                        <Check size={16} className={styles.successCheckIcon} />
                         <span>Ваш отзыв отправлен</span>
                       </div>
                     ) : activeOrderId === order.id ? (
@@ -348,7 +374,7 @@ export const ProfilePage = () => {
                             onClick={() => handleSendReview(order.id)}
                             disabled={reviewLoading || !reviewContent.trim()}
                           >
-                            Отправить
+                            {reviewLoading ? 'Отправка...' : 'Отправить'}
                           </button>
                           <button 
                             className={styles.cancelReviewBtn} 

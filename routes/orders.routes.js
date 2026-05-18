@@ -61,23 +61,33 @@ router.get("/", asyncHandler(async (req, res) => {
 }));
 
 router.get("/:userID", asyncHandler(async (req, res) => {
+    try {
+        const orders = await prisma.order.findMany({
+            where: {
+                userId: Number(req.params.userID)
+            },
+            include: {
+                ticket: true,
+                reviews: true
+            }
+        });
 
-    const orders = await prisma.order.findMany({
-        where: {
-            userId: Number(req.params.userID)
-        },
-        include: {
-            ticket: true
-        }
-    });
+        const formattedOrders = orders.map(order => {
+            const { reviews, ...orderData } = order;
+            return {
+                ...orderData,
+                review: reviews.length > 0 ? reviews[0] : null
+            };
+        });
 
-    if (orders.length === 0) {
-        return res.json({
-            message: "Заказы не найдены"
+        res.json(formattedOrders);
+    } catch (error) {
+        console.error("ОШИБКА ПРИ ПОЛУЧЕНИИ ЗАКАЗОВ:", error);
+        res.status(500).json({ 
+            message: "Ошибка сервера при получении заказов", 
+            error: error.message 
         });
     }
-
-    res.json(orders);
 }));
 
 export default router;
