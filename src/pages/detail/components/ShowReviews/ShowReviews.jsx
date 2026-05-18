@@ -1,7 +1,9 @@
 import styles from './ShowReviews.module.css';
 
 export const ShowReviews = ({ reviews, currentUser, onDeleteReview }) => {
-  if (!reviews || reviews.length === 0) {
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+
+  if (safeReviews.length === 0) {
     return (
       <div className={styles.reviewsContainer}>
         <h3 className={styles.sectionTitle}>Отзывы зрителей</h3>
@@ -12,10 +14,10 @@ export const ShowReviews = ({ reviews, currentUser, onDeleteReview }) => {
 
   return (
     <div className={styles.reviewsContainer}>
-      <h3 className={styles.sectionTitle}>Отзывы зрителей ({reviews.length})</h3>
+      <h3 className={styles.sectionTitle}>Отзывы зрителей ({safeReviews.length})</h3>
       
       <div className={styles.reviewsList}>
-        {reviews.map((review) => {
+        {safeReviews.map((review) => {
           const isOwnReview = currentUser && (review.userId === currentUser.id || review.order?.userId === currentUser.id);
           
           return (

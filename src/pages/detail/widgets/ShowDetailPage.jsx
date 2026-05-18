@@ -35,7 +35,7 @@ export const ShowDetailPage = () => {
         
         setTicket(ticketData);
         setUser(userData);
-        setReviews(reviewsData);
+        setReviews(Array.isArray(reviewsData) ? reviewsData : []);
 
         if (userData) {
           const [cartItems, favoriteItems] = await Promise.all([
@@ -80,7 +80,7 @@ export const ShowDetailPage = () => {
         setCartItemId(null);
         setSuccessMessage('Билеты удалены из корзины');
       } else {
-        const newCartItem = await cartApi.add({ userId: user.id, ticketId: id, quantity });
+        const newCartItem = await cartApi.add({ userId: user.id, ticketId: Number(id), quantity });
         setCartItemId(newCartItem.id);
         setSuccessMessage('Билеты добавлены в корзину!');
       }
@@ -94,7 +94,7 @@ export const ShowDetailPage = () => {
         setFavoriteItemId(null);
         setSuccessMessage('Удалено из избранного');
       } else {
-        const newFavoriteItem = await favoritesApi.add({ userId: user.id, ticketId: id });
+        const newFavoriteItem = await favoritesApi.add({ userId: user.id, ticketId: Number(id) });
         setFavoriteItemId(newFavoriteItem.id);
         setSuccessMessage('Добавлено в избранное!');
       }

@@ -78,4 +78,22 @@ router.get("/ticket/:idTicket", asyncHandler(async (req, res) => {
     res.json(reviews);
 }));
 
+router.delete("/:id", asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const review = await prisma.review.findUnique({
+        where: { id: Number(id) }
+    });
+
+    if (!review) {
+        return res.status(404).json({ message: "Отзыв не найден" });
+    }
+
+    await prisma.review.delete({
+        where: { id: Number(id) }
+    });
+
+    res.json({ message: "Отзыв успешно удален" });
+}));
+
 export default router;
