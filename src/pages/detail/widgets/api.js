@@ -68,3 +68,15 @@ export const favoritesApi = {
     return response.data;
   },
 };
+
+export const reviewsApi = {
+  getByTicketId: async (ticketId) => {
+    const response = await axios.get(`/api/reviews/ticket/${ticketId}`);
+    return response.data;
+  },
+  
+  remove: async (reviewId) => {
+    const response = await axios.delete(`/api/reviews/${reviewId}`);
+    return response.data;
+  }
+};

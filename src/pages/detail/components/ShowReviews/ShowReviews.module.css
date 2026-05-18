@@ -1,0 +1,92 @@
+.reviewsContainer {
+  margin-top: 40px;
+  border-top: 1px solid #2d2d2d;
+  padding-top: 30px;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.noReviews {
+  color: #666;
+  font-size: 15px;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reviewCard {
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarMini {
+  width: 36px;
+  height: 36px;
+  background: #2a2a2a;
+  color: #d4af37;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.authorName {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+}
+
+.reviewDate {
+  font-size: 12px;
+  color: #666;
+}
+
+.reviewContent {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.deleteReviewBtn {
+  background: transparent;
+  border: none;
+  color: #ff5c5c;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.deleteReviewBtn:hover {
+  background: rgba(255, 92, 92, 0.1);
+}
