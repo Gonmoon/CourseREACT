@@ -172,7 +172,7 @@ export const ProfilePage = () => {
         </div>
 
         <div className={styles.navigationRow}>
-          <Link to="/cart" className={styles.combinedNavButton} aria-label="Корзина и Избранное">
+          <Link to="/choice" className={styles.combinedNavButton} aria-label="Корзина и Избранное">
             <span className={styles.combinedLabel}>Мой выбор</span>
             
             <div className={styles.combinedBadges}>

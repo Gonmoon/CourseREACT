@@ -43,8 +43,12 @@ router.get("/:userId", asyncHandler(async (req, res) => {
             userId: Number(req.params.userId)
         },
         include: {
-            ticket: true,
-            user: true
+            user: true,
+            ticket: {
+                include: {
+                    promotion: true
+                }
+            }
         }
     });
 

@@ -41,7 +41,7 @@ export const ShowActions = ({
       </div>
 
       {cartItemId && (
-        <Link to="/cart" className={styles.checkoutButton}>
+        <Link to="/choice" className={styles.checkoutButton}>
           <span>Перейти к покупке</span>
           <ArrowRight size={20} />
         </Link>
