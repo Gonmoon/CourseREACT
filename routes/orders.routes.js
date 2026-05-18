@@ -8,18 +8,17 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 router.post("/", asyncHandler(async (req, res) => {
-
     const {
         userId,
-        ticketId,
-        quantity,
+        items,
         totalPrice
     } = req.body;
 
     if (
         !userId ||
-        !ticketId ||
-        !quantity ||
+        !items ||
+        !Array.isArray(items) ||
+        items.length === 0 ||
         !totalPrice
     ) {
         return res.status(400).json({
@@ -27,16 +26,26 @@ router.post("/", asyncHandler(async (req, res) => {
         });
     }
 
-    const order = await prisma.order.create({
-        data: {
-            userId: Number(userId),
-            ticketId: Number(ticketId),
-            quantity: Number(quantity),
-            totalPrice: Number(totalPrice)
-        }
-    });
+    const createdOrders = await prisma.$transaction(
+        items.map((item) => {
+            const itemTotalPrice = Number(item.price) * Number(item.quantity);
+            
+            return prisma.order.create({
+                data: {
+                    userId: Number(userId),
+                    ticketId: Number(item.ticketId),
+                    quantity: Number(item.quantity),
+                    totalPrice: itemTotalPrice
+                }
+            });
+        })
+    );
 
-    res.status(201).json(order);
+    res.status(201).json({
+        id: createdOrders[0]?.id,
+        subOrders: createdOrders,
+        totalPrice: Number(totalPrice)
+    });
 }));
 
 router.get("/", asyncHandler(async (req, res) => {

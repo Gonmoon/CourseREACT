@@ -11,13 +11,21 @@ export const CartPage = () => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
-  const [ticket, setTicket] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [cartItemId, setCartItemId] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
   const [error, setError] = useState(null);
+
+  const getDiscountedPrice = (ticket) => {
+    const originalPrice = ticket?.price || 0;
+    const discountPercent = ticket?.promotion?.discount || 0;
+    
+    if (discountPercent > 0) {
+      return Math.round(originalPrice * (1 - discountPercent / 100));
+    }
+    return originalPrice;
+  };
 
   useEffect(() => {
     const initPage = async () => {
@@ -32,36 +40,35 @@ export const CartPage = () => {
         }
         setUser(userData);
 
-        const cartItems = await cartApi.getByUserId(userData.id);
+        const items = await cartApi.getByUserId(userData.id);
         
-        if (!cartItems || cartItems.length === 0) {
+        if (!items || items.length === 0) {
           setError('Ваша корзина пуста. Нечего оформлять.');
           return;
         }
 
-        const activeCartItem = cartItems[0]; 
-        setCartItemId(activeCartItem.id);
-        const qty = activeCartItem.quantity;
+        for (const item of items) {
+          const ticketData = await ticketsApi.getById(item.ticketId);
+          
+          if (!ticketData) {
+            setError('Информация о билете для одного из товаров не найдена');
+            return;
+          }
 
-        const ticketData = await ticketsApi.getById(activeCartItem.ticketId);
+          if (ticketData.quantity <= 0) {
+            setError(`Билетов на мероприятие "${ticketData.title}" больше нет в наличии`);
+            return;
+          }
 
-        if (!ticketData) {
-          setError('Информация о билете не найдена');
-          return;
+          if (item.quantity > ticketData.quantity) {
+            setError(`Недостаточно билетов на "${ticketData.title}". Доступно: ${ticketData.quantity} шт., в корзине: ${item.quantity} шт.`);
+            return;
+          }
+          
+          item.ticket = ticketData;
         }
 
-        if (ticketData.quantity <= 0) {
-          setError('Билетов больше нет в наличии');
-          return;
-        }
-
-        if (qty > ticketData.quantity) {
-          setError(`Доступно только ${ticketData.quantity} шт. В корзине отложено: ${qty} шт.`);
-          return;
-        }
-
-        setTicket(ticketData);
-        setQuantity(qty);
+        setCartItems(items);
       } catch (err) {
         setError('Ошибка при загрузке данных корзины из базы');
       } finally {
@@ -71,33 +78,40 @@ export const CartPage = () => {
     initPage();
   }, [navigate]);
 
-  const totalPrice = ticket ? ticket.price * quantity : 0;
+  const calculateTotal = () => {
+    return cartItems.reduce((sum, item) => sum + getDiscountedPrice(item.ticket) * (item.quantity || 1), 0);
+  };
 
   const handleCheckout = async () => {
     try {
       setIsProcessing(true);
       setError(null);
 
-      const currentTicket = await ticketsApi.getById(ticket.id);
-      if (quantity > currentTicket.quantity) {
-        setError(`Ошибка: билеты закончились. Доступно для заказа: ${currentTicket.quantity} шт.`);
-        return;
+      for (const item of cartItems) {
+        const currentTicket = await ticketsApi.getById(item.ticketId);
+        if (item.quantity > currentTicket.quantity) {
+          setError(`Ошибка: билеты на "${currentTicket.title}" закончились или их количество изменилось. Доступно: ${currentTicket.quantity} шт.`);
+          return;
+        }
       }
 
       const response = await ordersApi.create({
         userId: user.id,
-        ticketId: ticket.id,
-        quantity: quantity,
-        totalPrice: totalPrice
+        items: cartItems.map(item => ({
+          ticketId: item.ticketId,
+          quantity: item.quantity,
+          price: getDiscountedPrice(item.ticket)
+        })),
+        totalPrice: calculateTotal()
       });
 
-      try {
-        if (cartItemId) {
-          await cartApi.remove(cartItemId);
-        }
-      } catch (cartErr) {
-        console.error("Не удалось удалить товар из корзины после покупки", cartErr);
-      }
+      await Promise.all(
+        cartItems.map(item => 
+          cartApi.remove(item.id).catch(cartErr => 
+            console.error(`Не удалось удалить товар ${item.id} из корзины после покупки`, cartErr)
+          )
+        )
+      );
 
       setOrderSuccess(response);
     } catch (err) {
@@ -108,16 +122,15 @@ export const CartPage = () => {
   };
 
   if (loading) return <div className={styles.center}><Loader className={styles.spin} /></div>;
-  if (error && !ticket) return <div className={styles.center}><div className={styles.error}>{error}</div></div>;
+  if (error && cartItems.length === 0) return <div className={styles.center}><div className={styles.error}>{error}</div></div>;
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         {!orderSuccess ? (
           <OrderCheckout 
-            ticket={ticket}
-            quantity={quantity}
-            totalPrice={totalPrice}
+            cartItems={cartItems}
+            totalPrice={calculateTotal()}
             error={error}
             isProcessing={isProcessing}
             onCheckout={handleCheckout}
@@ -125,9 +138,8 @@ export const CartPage = () => {
         ) : (
           <OrderSuccess 
             orderSuccess={orderSuccess}
-            ticket={ticket}
-            quantity={quantity}
-            totalPrice={totalPrice}
+            cartItems={cartItems}
+            totalPrice={calculateTotal()}
             user={user}
           />
         )}

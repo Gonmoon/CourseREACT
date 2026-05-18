@@ -3,7 +3,7 @@ import { CheckCircle, FileText, Download } from 'lucide-react';
 import { generateDOCX, generatePDF } from '../documentHelpers';
 import styles from './CartPage.module.css';
 
-export const OrderSuccess = ({ orderSuccess, ticket, quantity, totalPrice, user }) => {
+export const OrderSuccess = ({ orderSuccess, cartItems, totalPrice, user }) => {
   const navigate = useNavigate();
 
   return (
@@ -17,7 +17,7 @@ export const OrderSuccess = ({ orderSuccess, ticket, quantity, totalPrice, user 
       <div className={styles.downloadActions}>
         <button 
           className={styles.downloadButton} 
-          onClick={() => generateDOCX(orderSuccess, ticket, quantity, totalPrice, user)}
+          onClick={() => generateDOCX(orderSuccess, cartItems, totalPrice, user)}
         >
           <FileText size={20} />
           <span>Скачать в DOCX</span>
@@ -26,7 +26,7 @@ export const OrderSuccess = ({ orderSuccess, ticket, quantity, totalPrice, user 
 
         <button 
           className={styles.downloadButton} 
-          onClick={() => generatePDF(orderSuccess, ticket, quantity, totalPrice, user)}
+          onClick={() => generatePDF(orderSuccess, cartItems, totalPrice, user)}
         >
           <FileText size={20} />
           <span>Скачать в PDF</span>

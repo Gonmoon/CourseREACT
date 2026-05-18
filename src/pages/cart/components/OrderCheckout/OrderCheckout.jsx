@@ -1,16 +1,20 @@
 import { CreditCard } from 'lucide-react';
 import styles from './CartPage.module.css';
 
-export const OrderCheckout = ({ ticket, quantity, totalPrice, error, isProcessing, onCheckout }) => {
+export const OrderCheckout = ({ cartItems, totalPrice, error, isProcessing, onCheckout }) => {
   return (
     <>
       <h1 className={styles.title}>Оформление заказа</h1>
       <div className={styles.summaryCard}>
-        <div className={styles.ticketInfo}>
-          <h2>{ticket.title}</h2>
-          <p>Дата: {new Date(ticket.eventDate).toLocaleDateString('ru-RU')}</p>
-          <p>Количество: {quantity} шт.</p>
-          <p>Цена за билет: {ticket.price} ₽</p>
+        <div className={styles.itemsList}>
+          {cartItems.map((item) => (
+            <div key={item.id} className={styles.ticketInfo} style={{ marginBottom: '16px' }}>
+              <h2>{item.ticket?.title}</h2>
+              <p>Дата: {item.ticket?.eventDate ? new Date(item.ticket.eventDate).toLocaleDateString('ru-RU') : 'Не указана'}</p>
+              <p>Количество: {item.quantity} шт.</p>
+              <p>Цена за билет: {item.ticket?.price} ₽</p>
+            </div>
+          ))}
         </div>
         <div className={styles.divider} />
         <div className={styles.totalRow}>

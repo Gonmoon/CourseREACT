@@ -327,7 +327,7 @@ export const ChoicePage = () => {
                   </div>
                   <button 
                     className={styles.checkoutBtn}
-                    onClick={() => navigate('/checkout')}
+                    onClick={() => navigate('/cart')}
                   >
                     Оформить заказ
                   </button>
