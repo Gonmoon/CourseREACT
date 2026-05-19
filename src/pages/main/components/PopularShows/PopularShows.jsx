@@ -49,12 +49,6 @@ export const PopularShows = () => {
     return () => window.removeEventListener('resize', updateCardsPerView);
   }, []);
 
-  const handleSortChange = (type) => {
-    if (type === activeSort) return;
-    setActiveSort(type);
-    fetchTickets(type);
-  };
-
   const nextSlide = () => {
     if (currentSlide < tickets.length - cardsPerView) {
       setCurrentSlide((prev) => prev + 1);
@@ -75,29 +69,6 @@ export const PopularShows = () => {
         <div>
           <span className={styles.subtitle}>Афиша театра</span>
           <h2 className={styles.title}>Популярные спектакли</h2>
-        </div>
-
-        <div className={styles.actions}>
-          <button
-            className={`${styles.sortButton} ${activeSort === 'date-desc' ? styles.active : ''}`}
-            onClick={() => handleSortChange('date-desc')}
-          >
-            Новые
-          </button>
-
-          <button
-            className={`${styles.sortButton} ${activeSort === 'price-asc' ? styles.active : ''}`}
-            onClick={() => handleSortChange('price-asc')}
-          >
-            Дешевле
-          </button>
-
-          <button
-            className={`${styles.sortButton} ${activeSort === 'price-desc' ? styles.active : ''}`}
-            onClick={() => handleSortChange('price-desc')}
-          >
-            Дороже
-          </button>
         </div>
       </div>
 
