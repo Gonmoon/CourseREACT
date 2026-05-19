@@ -59,7 +59,7 @@ export const OwnerPage = () => {
       if (
         me.firstName !== "admin" ||
         me.lastName !== "admin" ||
-        me.email !== "admin"
+        me.email !== "admin@admin.com"
       ) {
         navigate("/");
         return;

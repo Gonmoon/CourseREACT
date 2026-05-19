@@ -60,7 +60,7 @@ export const BurgerMenu = () => {
     user && 
     user.firstName === "admin" && 
     user.lastName === "admin" && 
-    user.email === "admin";
+    user.email === "admin@admin.com";
 
   const navItems = isAdmin 
     ? [...baseNavItems, { title: 'Управление', path: '/owner' }] 
