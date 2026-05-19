@@ -76,6 +76,7 @@ router.get("/page", asyncHandler(async (req, res) => {
         where: {
             title: {
                 contains: q,
+                mode: 'insensitive',
             },
         },
         orderBy: sortMap[sort] || undefined,
