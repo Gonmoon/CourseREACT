@@ -38,7 +38,12 @@ router.get("/", asyncHandler(async (req, res) => {
 
     const reviews = await prisma.review.findMany({
         include: {
-            order: true
+            order: {
+                include: {
+                    ticket: true,
+                    user: true
+                }
+            }
         }
     });
 

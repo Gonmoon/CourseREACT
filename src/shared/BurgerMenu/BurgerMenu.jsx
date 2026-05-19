@@ -5,7 +5,7 @@ import { authApi } from '@pages/auth/api/auth';
 
 import styles from './BurgerMenu.module.css';
 
-const navItems = [
+const baseNavItems = [
   { title: 'Главная', path: '/' },
   { title: 'Билеты', path: '/tickets' },
   { title: 'Отзывы', path: '/reviews' },
@@ -55,6 +55,16 @@ export const BurgerMenu = () => {
       navigate('/auth');
     }
   };
+
+  const isAdmin = 
+    user && 
+    user.firstName === "admin" && 
+    user.lastName === "admin" && 
+    user.email === "admin";
+
+  const navItems = isAdmin 
+    ? [...baseNavItems, { title: 'Управление', path: '/owner' }] 
+    : baseNavItems;
 
   return (
     <>

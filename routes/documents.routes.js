@@ -37,7 +37,12 @@ router.get("/", asyncHandler(async (req, res) => {
 
     const documents = await prisma.orderDocument.findMany({
         include: {
-            order: true
+            order: {
+                include: {
+                    user: true,
+                    ticket: true
+                }
+            }
         }
     });
 

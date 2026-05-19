@@ -10,6 +10,7 @@ import { ShowDetailPage } from '@pages/detail';
 import { CartPage } from '@pages/cart';
 import { ProfilePage } from '@pages/profile';
 import { ChoicePage } from '@pages/choice';
+import { OwnerPage } from '@pages/owner';
 
 export const App = () => {
   return (
@@ -47,6 +48,11 @@ export const App = () => {
         <Route
           path="/cart"
           element={<CartPage />}
+        />
+
+        <Route
+          path="/owner"
+          element={<OwnerPage />}
         />
       </Routes>
 
