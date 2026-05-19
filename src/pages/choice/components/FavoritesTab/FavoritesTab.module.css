@@ -1,0 +1,654 @@
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: #0f0f0f;
+  color: white;
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #181818;
+  padding: 40px;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.centerLayout {
+  min-height: 100vh;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.loader {
+  font-size: 18px;
+  color: #aaa;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #222;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #aaa;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.backLink:hover {
+  background: #2a2a2a;
+  color: white;
+}
+
+.title {
+  font-size: 36px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tabsRow {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #2d2d2d;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #222;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #aaa;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.tabButton:hover {
+  background: #2a2a2a;
+  color: white;
+}
+
+.tabActive {
+  background: #d4af37;
+  color: black;
+  border-color: #d4af37;
+}
+
+.tabActive:hover {
+  background: #d4af37;
+  color: black;
+}
+
+.tabBadge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+}
+
+.tabActive .tabBadge {
+  background: rgba(0, 0, 0, 0.15);
+  color: black;
+}
+
+.contentSection {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.emptyBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.emptyBlock p {
+  font-size: 18px;
+  color: #aaa;
+  margin: 0 0 20px 0;
+}
+
+.shopLink {
+  display: inline-block;
+  background: #d4af37;
+  color: black;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.shopLink:hover {
+  opacity: 0.9;
+}
+
+.cartLayout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  align-items: start;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 14px;
+  gap: 20px;
+}
+
+.cardMain {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.iconContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  color: #d4af37;
+  flex-shrink: 0;
+}
+
+.ticketIcon {
+  color: #d4af37;
+}
+
+.miniDiscountBadge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: #ff5c5c;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.cardInfo h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 6px 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #aaa;
+  margin: 0 0 8px 0;
+}
+
+.priceMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.priceOne {
+  font-size: 15px;
+  font-weight: 600;
+  color: #d4af37;
+}
+
+.oldPriceOne {
+  font-size: 13px;
+  text-decoration: line-through;
+  color: #666;
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.counterBtn {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 38px;
+  height: 100%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.counterBtn:hover:not(:disabled) {
+  background: #222;
+}
+
+.counterBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.countValue {
+  width: 44px;
+  height: 100%;
+  border-left: 1px solid #2d2d2d;
+  border-right: 1px solid #2d2d2d;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.priceBlock {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.totalPriceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 90px;
+}
+
+.totalPrice {
+  font-size: 18px;
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.oldTotalPrice {
+  font-size: 13px;
+  text-decoration: line-through;
+  color: #666;
+}
+
+.deleteBtn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+  background: #3a2222;
+  color: #ff5c5c;
+}
+
+.summaryCard {
+  background: #111;
+  border: 1px solid #2d2d2d;
+  border-radius: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.summaryCard h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 20px 0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  color: #bbb;
+  margin-bottom: 12px;
+}
+
+.discountRow {
+  color: #ff5c5c;
+  font-weight: 500;
+}
+
+.summaryDivider {
+  height: 1px;
+  background: #2d2d2d;
+  margin: 16px 0;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 700;
+  color: #d4af37;
+  margin-bottom: 24px;
+}
+
+.checkoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.checkoutBtn:hover {
+  background: #27ae60;
+}
+
+.favoriteActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.moveToCartBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4af37;
+  color: black;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.moveToCartBtn:hover {
+  opacity: 0.9;
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.success {
+  background: rgba(46, 204, 113, 0.9);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.error {
+  background: rgba(255, 92, 92, 0.9);
+  border: 1px solid rgba(255, 92, 92, 0.2);
+}
+
+.toastClose {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.toastClose:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cartLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 20px 12px;
+  }
+
+  .container {
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+
+  .header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .backLink {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .tabsRow {
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabButton {
+    padding: 10px 18px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .cardMain {
+    width: 100%;
+  }
+
+  .cardActions {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #2d2d2d;
+    padding-top: 14px;
+    gap: 16px;
+  }
+
+  .favoriteActions {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #2d2d2d;
+    padding-top: 14px;
+  }
+
+  .moveToCartBtn {
+    flex-grow: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .backLink {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .cardMain {
+    gap: 12px;
+  }
+
+  .iconContainer {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cardInfo h3 {
+    font-size: 16px;
+  }
+
+  .meta {
+    font-size: 13px;
+  }
+
+  .cardActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .counter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .counterBtn {
+    flex-grow: 1;
+  }
+
+  .countValue {
+    flex-grow: 2;
+  }
+
+  .priceBlock {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .totalPriceContainer {
+    align-items: flex-start;
+  }
+
+  .toast {
+    top: auto;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    font-size: 14px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+  }
+}
