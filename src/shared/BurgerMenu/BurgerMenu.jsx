@@ -7,8 +7,7 @@ import styles from './BurgerMenu.module.css';
 
 const baseNavItems = [
   { title: 'Главная', path: '/' },
-  { title: 'Билеты', path: '/tickets' },
-  { title: 'Отзывы', path: '/reviews' },
+  { title: 'Билеты', path: '/tickets' }
 ];
 
 export const BurgerMenu = () => {
