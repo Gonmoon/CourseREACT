@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2026 Gonmoon
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
 import { Routes, Route } from 'react-router-dom';
 
 import { BurgerMenu } from '@shared/BurgerMenu';
